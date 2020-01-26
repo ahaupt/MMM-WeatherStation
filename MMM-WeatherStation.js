@@ -323,19 +323,23 @@ Module.register("MMM-WeatherStation", {
 		outTempSymbolSpan.className = "fa fa-thermometer-half smallrow";
 		outTempSymbol.appendChild(outSymbolSpan);
 		outTempSymbol.appendChild(outTempSymbolSpan);
-		outTempData.className = "margin " + self.cssClassTemp(outdoorTemperatureValue);
+		outTempData.className = "margin";
+		outTempData.style.color = "hsl("+ self.tempHue(outdoorTemperatureValue) +",75%,60%)";
 		outTempData.innerHTML += outdoorTemperatureValue + symbol;
 		outTempMinSymbol.className = "smallrow margin minimum fa fa-thermometer-empty";
-		outTempMin.className = "smallrow margin " + self.cssClassTemp(outdoorTemperatureMin);
+		outTempMin.className = "smallrow margin";
+		outTempMin.style.color = "hsl("+ self.tempHue(outdoorTemperatureMin) +",75%,60%)";
 		outTempMin.innerHTML = outdoorTemperatureMin + symbol;
 		outTempMaxSymbol.className = "smallrow margin maximum fa fa-thermometer-full";
-		outTempMax.className = "smallrow margin " + self.cssClassTemp(outdoorTemperatureMax);
+		outTempMax.className = "smallrow margin";
+		outTempMax.style.color = "hsl("+ self.tempHue(outdoorTemperatureMax) +",75%,60%)";
 		outTempMax.innerHTML += outdoorTemperatureMax + symbol;
 			
 		outHumiSymbolSpan.className = "margin fa fa-tint smallrow";
 		outHumiSymbol.appendChild(outHumiSymbolSpan);
 		outHumi.innerHTML += outdoorHumidityValue + "%";
-		outHumi.className = self.cssClassHumi(outdoorHumidityValue);
+//		outHumi.className = self.cssClassHumi(outdoorHumidityValue);
+		outHumi.style.color = "hsl("+ self.humiHue(outdoorHumidityValue) +",75%,60%)";
 
 		outDewpoint.className = "smallrow margin";
 		outDewpoint.innerHTML += outdoorDewpointValue + symbol;
@@ -380,20 +384,23 @@ Module.register("MMM-WeatherStation", {
 		inSymbolSpan.className = "fa fa-home";
 		inTempSymbol.appendChild(inSymbolSpan);
 		inTempSymbol.appendChild(inTempSymbolSpan);
-		inTempData.className = "margin " + self.cssClassTemp(indoorTemperatureValue);
+		inTempData.className = "margin";
+		inTempData.style.color = "hsl("+ self.tempHue(indoorTemperatureValue) +",75%,60%)";
 		inTempData.innerHTML += indoorTemperatureValue + symbol;
 		inTempMinSymbol.className = "smallrow margin minimum fa fa-thermometer-empty";
-		inTempMin.className = "smallrow margin " + self.cssClassTemp(indoorTemperatureMin);
+		inTempMin.className = "smallrow margin";
+		inTempMin.style.color = "hsl("+ self.tempHue(indoorTemperatureMin) +",75%,60%)";
 		inTempMin.innerHTML = indoorTemperatureMin + symbol;
 		inTempMaxSymbol.className = "smallrow margin maximum fa fa-thermometer-full";
-		inTempMax.className = "smallrow margin " + self.cssClassTemp(indoorTemperatureMax);
+		inTempMax.className = "smallrow margin";
+		inTempMax.style.color = "hsl("+ self.tempHue(indoorTemperatureMax) +",75%,60%)";
 		inTempMax.innerHTML += indoorTemperatureMax + symbol;
 			
 		inHumiSymbolSpan.className = "margin fa fa-tint smallrow";
 		inHumiSymbol.appendChild(inHumiSymbolSpan);
 		inHumi.innerHTML += indoorHumidityValue + "%";
-		inHumi.className = self.cssClassHumi(indoorHumidityValue);
-
+//		inHumi.className = self.cssClassHumi(indoorHumidityValue);
+		inHumi.style.color = "hsl("+ self.humiHue(indoorHumidityValue) +",75%,60%)";
 		inDewpoint.className = "smallrow margin";
 		inDewpoint.innerHTML += indoorDewpointValue + symbol;
 
@@ -455,22 +462,6 @@ Module.register("MMM-WeatherStation", {
     	else { return Number(Math.round(number + "e-" + Math.abs(precision)) + "e" + Math.abs(precision)); }
     },
 
-	cssClassTemp: function(val) {
-		if ( val <= -10.0 ) {
-			return 'fuckingcold'
-		} else if ( val < 0.0 ) {
-			return 'cold';
-		} else if ( val < 10.0 ) {
-			return 'chilly';
-		} else if ( val < 20.0 ) {
-			return 'comfortable';
-		} else if ( val < 30.0 ) {
-			return 'warm';
-		} else {
-			return 'hot';
-		}		
-	},
-
 	cssClassHumi: function(val) {
 		if ( val < 50.0 ) {
 			return 'dry'
@@ -479,6 +470,28 @@ Module.register("MMM-WeatherStation", {
 		} else {
 			return 'wet';
 		}		
+	},
+
+	tempHue: function(temp) {
+		var min = -20;
+		var max =  35;
+		if ( temp < min ) {
+			temp = min;
+		} else if ( temp > max ) {
+			temp = max;
+		};
+		return Math.round(300 - (temp-min) * (300/(max-min)));
+	},
+
+	humiHue: function(humi) {
+		var min =  20;
+		var max = 100;
+		if ( humi < min ) {
+			humi = min;
+		} else if ( humi > max ) {
+			humi = max;
+		};
+		return Math.round(250 - (max-humi) * (250/(max-min)));
 	},
 
 	/**
