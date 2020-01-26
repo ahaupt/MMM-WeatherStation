@@ -297,15 +297,13 @@ Module.register("MMM-WeatherStation", {
 //		table.border=true;
 		var tbody = document.createElement('tbody');
 
+// outside
+
 		var outRow1 = document.createElement('tr');
 		var outRow2 = document.createElement('tr');
-		var outRow3 = document.createElement('tr');
-		var inTempRow = document.createElement('tr');
-		var inTempRow2 = document.createElement('tr');
-		var inHumiRow = document.createElement('tr');
-		var airPressureRow = document.createElement('tr');
 
 		var outTempSymbol = document.createElement('td');
+		var outSymbolSpan = document.createElement('span');
 		var outTempSymbolSpan = document.createElement('span');
 		var outTempData = document.createElement('td');
 		outTempData.setAttribute('colSpan', '3');
@@ -321,7 +319,9 @@ Module.register("MMM-WeatherStation", {
 		outDewpointSymbol.className = "smallrow";
 		var outDewpoint = document.createElement('td');
 
-		outTempSymbolSpan.className = "fa fa-thermometer-half";
+		outSymbolSpan.className = "fa fa-sun";
+		outTempSymbolSpan.className = "fa fa-thermometer-half smallrow";
+		outTempSymbol.appendChild(outSymbolSpan);
 		outTempSymbol.appendChild(outTempSymbolSpan);
 		outTempData.className = "margin " + self.cssClassTemp(outdoorTemperatureValue);
 		outTempData.innerHTML += outdoorTemperatureValue + symbol;
@@ -332,42 +332,13 @@ Module.register("MMM-WeatherStation", {
 		outTempMax.className = "smallrow margin " + self.cssClassTemp(outdoorTemperatureMax);
 		outTempMax.innerHTML += outdoorTemperatureMax + symbol;
 			
-		outHumiSymbolSpan.className = "margin fa fa-tint";
+		outHumiSymbolSpan.className = "margin fa fa-tint smallrow";
 		outHumiSymbol.appendChild(outHumiSymbolSpan);
 		outHumi.innerHTML += outdoorHumidityValue + "%";
 		outHumi.className = self.cssClassHumi(outdoorHumidityValue);
 
 		outDewpoint.className = "smallrow margin";
 		outDewpoint.innerHTML += outdoorDewpointValue + symbol;
-
-/*
-		var inTempData = document.createElement('td');
-		inTempData.setAttribute('rowSpan', '2');
-		var inTempMin = document.createElement('td');
-		var inTempMax = document.createElement('td');
-
-		inTempData.innerHTML += "<span class=\"fa fa-thermometer-half\"></span> " + indoorTemperatureValue + symbol;
-		inTempMin.innerHTML += "<span class=\"minimum\">" + "Min: " + indoorTemperatureMin + symbol + "</span> ";
-		inTempMax.innerHTML += "<span class=\"maximum\">" + "Max: " + indoorTemperatureMax + symbol + "</span> ";
-			
-		inTempRow.appendChild(inTempData);
-		inTempRow.appendChild(inTempMax);
-		inTempRow2.appendChild(inTempMin);
-
-		tbody.appendChild(inTempRow);
-		tbody.appendChild(inTempRow2);
-
-		var inHumi = document.createElement('td');
-		inHumi.style.horizontalAlign = 'left';
-		var inDewpoint = document.createElement('td');
-			
-		inHumi.innerHTML += "<span class=\"fa fa-tint\"></span> " + indoorHumidityValue + "%";
-		inDewpoint.innerHTML += indoorDewpointValue + symbol;
-
-		inHumiRow.appendChild(inHumi);
-		inHumiRow.appendChild(inDewpoint);
-		tbody.appendChild(inHumiRow);
-*/
 
 		outRow1.appendChild(outTempSymbol);
 		outRow1.appendChild(outTempData);
@@ -380,10 +351,66 @@ Module.register("MMM-WeatherStation", {
 		outRow2.appendChild(outDewpointSymbol);
 		outRow2.appendChild(outDewpoint);
 
-		tbody.appendChild(outRow1);
-		tbody.appendChild(outRow2);
-//		tbody.appendChild(outRow3);
+// inner
 
+		var inRow1 = document.createElement('tr');
+		var inRow2 = document.createElement('tr');
+		var inTempRow = document.createElement('tr');
+		var inTempRow2 = document.createElement('tr');
+		var inHumiRow = document.createElement('tr');
+
+		var inTempSymbol = document.createElement('td');
+		var inTempSymbolSpan = document.createElement('span');
+		var inSymbolSpan = document.createElement('span');
+		var inTempData = document.createElement('td');
+		inTempData.setAttribute('colSpan', '3');
+		var inTempMinSymbol = document.createElement('td');
+		var inTempMin = document.createElement('td');
+		var inTempMaxSymbol = document.createElement('td');
+		var inTempMax = document.createElement('td');
+
+		var inHumiSymbol = document.createElement('td');
+		var inHumiSymbolSpan = document.createElement('span');
+		var inHumi = document.createElement('td');
+		var inDewpointSymbol = document.createElement('td');
+		inDewpointSymbol.className = "smallrow";
+		var inDewpoint = document.createElement('td');
+
+		inTempSymbolSpan.className = "fa fa-thermometer-half smallrow";
+		inSymbolSpan.className = "fa fa-home";
+		inTempSymbol.appendChild(inSymbolSpan);
+		inTempSymbol.appendChild(inTempSymbolSpan);
+		inTempData.className = "margin " + self.cssClassTemp(indoorTemperatureValue);
+		inTempData.innerHTML += indoorTemperatureValue + symbol;
+		inTempMinSymbol.className = "smallrow margin minimum fa fa-thermometer-empty";
+		inTempMin.className = "smallrow margin " + self.cssClassTemp(indoorTemperatureMin);
+		inTempMin.innerHTML = indoorTemperatureMin + symbol;
+		inTempMaxSymbol.className = "smallrow margin maximum fa fa-thermometer-full";
+		inTempMax.className = "smallrow margin " + self.cssClassTemp(indoorTemperatureMax);
+		inTempMax.innerHTML += indoorTemperatureMax + symbol;
+			
+		inHumiSymbolSpan.className = "margin fa fa-tint smallrow";
+		inHumiSymbol.appendChild(inHumiSymbolSpan);
+		inHumi.innerHTML += indoorHumidityValue + "%";
+		inHumi.className = self.cssClassHumi(indoorHumidityValue);
+
+		inDewpoint.className = "smallrow margin";
+		inDewpoint.innerHTML += indoorDewpointValue + symbol;
+
+		inRow1.appendChild(inTempSymbol);
+		inRow1.appendChild(inTempData);
+		inRow1.appendChild(inHumiSymbol);
+		inRow1.appendChild(inHumi);
+		inRow2.appendChild(inTempMinSymbol);
+		inRow2.appendChild(inTempMin);
+		inRow2.appendChild(inTempMaxSymbol);
+		inRow2.appendChild(inTempMax);
+		inRow2.appendChild(inDewpointSymbol);
+		inRow2.appendChild(inDewpoint);
+
+// air pressure
+
+		var airPressureRow = document.createElement('tr');
 		var airPressureSymbol = document.createElement('td');
 		var airPressure = document.createElement('td');
 		var airPressureTrendSymbol = document.createElement('td');
@@ -399,6 +426,13 @@ Module.register("MMM-WeatherStation", {
 		airPressureRow.appendChild(airPressure);
 		airPressureRow.appendChild(airPressureTrendSymbol);
 		airPressureRow.appendChild(airPressureTrend);
+
+		tbody.appendChild(inRow1);
+		tbody.appendChild(inRow2);
+
+		tbody.appendChild(outRow1);
+		tbody.appendChild(outRow2);
+
 		tbody.appendChild(airPressureRow);
 
 		table.appendChild(tbody);
