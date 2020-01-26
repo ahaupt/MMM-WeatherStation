@@ -1,0 +1,4 @@
+# editor
+*.sw*
+# Node
+node_modules
