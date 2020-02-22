@@ -425,10 +425,12 @@ Module.register("MMM-WeatherStation", {
 		airPressure.setAttribute('colSpan', '3');
 //		airPressureSymbol.innerHTML = "<img src=images/air-pressure.png />"
 		airPressure.innerHTML = airPressureValue + ' hPa';
-		airPressure.className = 'medium margin ' + (airPressureValue < 1013 ? "lowpressure" : "highpressure");
+		airPressure.className = 'medium margin';
+		airPressure.style.color = "hsl("+ self.pressureHue(airPressureValue) +",75%,60%)";
 		airPressureTrendSymbol.className = "margin fa fa-angle-" + DeltaSymbol;
 		airPressureTrend.innerHTML = (airPressureValueTrend > 0 ? "+" : "") + airPressureValueTrend;
-		airPressureTrend.className = 'medium margin ' + (airPressureValueTrend > 0 ? "highpressure" : "lowpressure");
+		airPressureTrend.className = 'medium margin';
+		airPressureTrend.style.color = "hsl("+ self.pressureTrendHue(airPressureValueTrend) +",75%,60%)";
 		airPressureRow.appendChild(airPressureSymbol);
 		airPressureRow.appendChild(airPressure);
 		airPressureRow.appendChild(airPressureTrendSymbol);
@@ -492,6 +494,28 @@ Module.register("MMM-WeatherStation", {
 			humi = max;
 		};
 		return Math.round(250 - (max-humi) * (250/(max-min)));
+	},
+
+	pressureHue: function(pressure) {
+		var min =  980;
+		var max = 1040;
+		if ( pressure < min ) {
+			pressure = min;
+		} else if ( pressure > max ) {
+			pressure = max;
+		};
+		return Math.round(250 - (pressure-min) * (250/(max-min)));
+	},
+
+	pressureTrendHue: function(trend) {
+		var min =  -1.5;
+		var max =   1.5;
+		if ( trend < min ) {
+			trend = min;
+		} else if ( trend > max ) {
+			trend = max;
+		};
+		return Math.round(250 - (trend-min) * (250/(max-min)));
 	},
 
 	/**
