@@ -277,6 +277,7 @@ Module.register("MMM-WeatherStation", {
 		airPressureValue = self.replaceAll(airPressureValue.toString(), ".", self.config.decimalSymbol);
 		var airPressureValueTrend = self.roundNumber(self.sensorData['air-pressure']-self.sensorData['air-pressure-1hour'], temperatureDecimals).toFixed(temperatureDecimals);
 		var DeltaSymbol = 'right';
+		var DeltaBlink = '';
 		if ( airPressureValueTrend > 0.1 && airPressureValueTrend < 1.0 ) {
 			DeltaSymbol = 'up'
 		} else if ( airPressureValueTrend >= 1.0 ) {
@@ -285,6 +286,9 @@ Module.register("MMM-WeatherStation", {
 			DeltaSymbol = 'down';
 		} else if ( airPressureValueTrend <= -1.0 ) {
 			DeltaSymbol = 'double-down';
+			if ( airPressureValueTrend <= -2.0 ) {
+				DeltaBlink = 'blink';
+			}
 		}
 
 		airPressureValueTrend = self.replaceAll(airPressureValueTrend.toString(), ".", self.config.decimalSymbol);
@@ -427,7 +431,7 @@ Module.register("MMM-WeatherStation", {
 		airPressure.innerHTML = airPressureValue + ' hPa';
 		airPressure.className = 'medium margin';
 		airPressure.style.color = "hsl("+ self.pressureHue(airPressureValue) +",75%,60%)";
-		airPressureTrendSymbol.className = "margin fa fa-angle-" + DeltaSymbol;
+		airPressureTrendSymbol.className = DeltaBlink + " margin fa fa-angle-" + DeltaSymbol;
 		airPressureTrend.innerHTML = (airPressureValueTrend > 0 ? "+" : "") + airPressureValueTrend;
 		airPressureTrend.className = 'medium margin';
 		airPressureTrend.style.color = "hsl("+ self.pressureTrendHue(airPressureValueTrend) +",75%,60%)";
@@ -508,8 +512,8 @@ Module.register("MMM-WeatherStation", {
 	},
 
 	pressureTrendHue: function(trend) {
-		var min =  -1.5;
-		var max =   1.5;
+		var min =  -2.0;
+		var max =   2.0;
 		if ( trend < min ) {
 			trend = min;
 		} else if ( trend > max ) {

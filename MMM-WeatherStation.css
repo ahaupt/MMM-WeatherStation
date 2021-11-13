@@ -30,6 +30,14 @@
 .MMM-WeatherStation .moderate	{ color: #22aa22; }
 .MMM-WeatherStation .dry	{ color: #bb4400; }
 
+.MMM-WeatherStation .blink	{ animation: blinker 1s linear infinite; }
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 .MMM-WeatherStation .lowpressure	{ color: #7777ff; }
 .MMM-WeatherStation .highpressure	{ color: #dd5555; }
 

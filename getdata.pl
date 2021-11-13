@@ -22,13 +22,21 @@ $response = $ua->request($request);
 die $response->status_line() unless $response->is_success();
 $data = from_json($response->content(), { utf8 => 1 });
 
+if ( open LOCAL_DATA, "/dev/shm/indoor-data" ) {
+	chomp($_ = <LOCAL_DATA>);
+	my ($temp, $humi) = split /\s+/;
+	close LOCAL_DATA;
+	$data->{'indoor-temperature'} = $temp;
+	$data->{'indoor-humidity'} = $humi;
+}
+
 my $dbh = sqlite_db();
 safe_data($dbh, $data);
 my $minmax = get_minmax($dbh);
 
 $output = {
 	'air-pressure'		=> $data->{'air-pressure'},
-	'air-pressure-1hour'	=> $minmax->{'air-pressure-1hour'},
+	'air-pressure-1hour'	=> $minmax->{'air-pressure-1hour'} || $data->{'air-pressure'},
 	'indoor-humidity'	=> $data->{'indoor-humidity'},
 	'indoor-humidity-min'	=> $minmax->{'indoor-humi-min'},
 	'indoor-humidity-max'	=> $minmax->{'indoor-humi-max'},
