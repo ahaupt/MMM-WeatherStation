@@ -277,6 +277,7 @@ Module.register("MMM-WeatherStation", {
 		airPressureValue = self.replaceAll(airPressureValue.toString(), ".", self.config.decimalSymbol);
 		var airPressureValueTrend = self.roundNumber(self.sensorData['air-pressure']-self.sensorData['air-pressure-1hour'], temperatureDecimals).toFixed(temperatureDecimals);
 		var DeltaSymbol = 'right';
+		var DeltaBlink = '';
 		if ( airPressureValueTrend > 0.1 && airPressureValueTrend < 1.0 ) {
 			DeltaSymbol = 'up'
 		} else if ( airPressureValueTrend >= 1.0 ) {
@@ -285,6 +286,9 @@ Module.register("MMM-WeatherStation", {
 			DeltaSymbol = 'down';
 		} else if ( airPressureValueTrend <= -1.0 ) {
 			DeltaSymbol = 'double-down';
+			if ( airPressureValueTrend <= -2.0 ) {
+				DeltaBlink = 'blink';
+			}
 		}
 
 		airPressureValueTrend = self.replaceAll(airPressureValueTrend.toString(), ".", self.config.decimalSymbol);
@@ -297,15 +301,13 @@ Module.register("MMM-WeatherStation", {
 //		table.border=true;
 		var tbody = document.createElement('tbody');
 
+// outside
+
 		var outRow1 = document.createElement('tr');
 		var outRow2 = document.createElement('tr');
-		var outRow3 = document.createElement('tr');
-		var inTempRow = document.createElement('tr');
-		var inTempRow2 = document.createElement('tr');
-		var inHumiRow = document.createElement('tr');
-		var airPressureRow = document.createElement('tr');
 
 		var outTempSymbol = document.createElement('td');
+		var outSymbolSpan = document.createElement('span');
 		var outTempSymbolSpan = document.createElement('span');
 		var outTempData = document.createElement('td');
 		outTempData.setAttribute('colSpan', '3');
@@ -321,53 +323,30 @@ Module.register("MMM-WeatherStation", {
 		outDewpointSymbol.className = "smallrow";
 		var outDewpoint = document.createElement('td');
 
-		outTempSymbolSpan.className = "fa fa-thermometer-half";
+		outSymbolSpan.className = "fa fa-sun";
+		outTempSymbolSpan.className = "fa fa-thermometer-half smallrow";
+		outTempSymbol.appendChild(outSymbolSpan);
 		outTempSymbol.appendChild(outTempSymbolSpan);
-		outTempData.className = "margin " + self.cssClassTemp(outdoorTemperatureValue);
+		outTempData.className = "margin";
+		outTempData.style.color = "hsl("+ self.tempHue(outdoorTemperatureValue) +",75%,60%)";
 		outTempData.innerHTML += outdoorTemperatureValue + symbol;
 		outTempMinSymbol.className = "smallrow margin minimum fa fa-thermometer-empty";
-		outTempMin.className = "smallrow margin " + self.cssClassTemp(outdoorTemperatureMin);
+		outTempMin.className = "smallrow margin";
+		outTempMin.style.color = "hsl("+ self.tempHue(outdoorTemperatureMin) +",75%,60%)";
 		outTempMin.innerHTML = outdoorTemperatureMin + symbol;
 		outTempMaxSymbol.className = "smallrow margin maximum fa fa-thermometer-full";
-		outTempMax.className = "smallrow margin " + self.cssClassTemp(outdoorTemperatureMax);
+		outTempMax.className = "smallrow margin";
+		outTempMax.style.color = "hsl("+ self.tempHue(outdoorTemperatureMax) +",75%,60%)";
 		outTempMax.innerHTML += outdoorTemperatureMax + symbol;
 			
-		outHumiSymbolSpan.className = "margin fa fa-tint";
+		outHumiSymbolSpan.className = "margin fa fa-tint smallrow";
 		outHumiSymbol.appendChild(outHumiSymbolSpan);
 		outHumi.innerHTML += outdoorHumidityValue + "%";
-		outHumi.className = self.cssClassHumi(outdoorHumidityValue);
+//		outHumi.className = self.cssClassHumi(outdoorHumidityValue);
+		outHumi.style.color = "hsl("+ self.humiHue(outdoorHumidityValue) +",75%,60%)";
 
 		outDewpoint.className = "smallrow margin";
 		outDewpoint.innerHTML += outdoorDewpointValue + symbol;
-
-/*
-		var inTempData = document.createElement('td');
-		inTempData.setAttribute('rowSpan', '2');
-		var inTempMin = document.createElement('td');
-		var inTempMax = document.createElement('td');
-
-		inTempData.innerHTML += "<span class=\"fa fa-thermometer-half\"></span> " + indoorTemperatureValue + symbol;
-		inTempMin.innerHTML += "<span class=\"minimum\">" + "Min: " + indoorTemperatureMin + symbol + "</span> ";
-		inTempMax.innerHTML += "<span class=\"maximum\">" + "Max: " + indoorTemperatureMax + symbol + "</span> ";
-			
-		inTempRow.appendChild(inTempData);
-		inTempRow.appendChild(inTempMax);
-		inTempRow2.appendChild(inTempMin);
-
-		tbody.appendChild(inTempRow);
-		tbody.appendChild(inTempRow2);
-
-		var inHumi = document.createElement('td');
-		inHumi.style.horizontalAlign = 'left';
-		var inDewpoint = document.createElement('td');
-			
-		inHumi.innerHTML += "<span class=\"fa fa-tint\"></span> " + indoorHumidityValue + "%";
-		inDewpoint.innerHTML += indoorDewpointValue + symbol;
-
-		inHumiRow.appendChild(inHumi);
-		inHumiRow.appendChild(inDewpoint);
-		tbody.appendChild(inHumiRow);
-*/
 
 		outRow1.appendChild(outTempSymbol);
 		outRow1.appendChild(outTempData);
@@ -380,10 +359,69 @@ Module.register("MMM-WeatherStation", {
 		outRow2.appendChild(outDewpointSymbol);
 		outRow2.appendChild(outDewpoint);
 
-		tbody.appendChild(outRow1);
-		tbody.appendChild(outRow2);
-//		tbody.appendChild(outRow3);
+// inner
 
+		var inRow1 = document.createElement('tr');
+		var inRow2 = document.createElement('tr');
+		var inTempRow = document.createElement('tr');
+		var inTempRow2 = document.createElement('tr');
+		var inHumiRow = document.createElement('tr');
+
+		var inTempSymbol = document.createElement('td');
+		var inTempSymbolSpan = document.createElement('span');
+		var inSymbolSpan = document.createElement('span');
+		var inTempData = document.createElement('td');
+		inTempData.setAttribute('colSpan', '3');
+		var inTempMinSymbol = document.createElement('td');
+		var inTempMin = document.createElement('td');
+		var inTempMaxSymbol = document.createElement('td');
+		var inTempMax = document.createElement('td');
+
+		var inHumiSymbol = document.createElement('td');
+		var inHumiSymbolSpan = document.createElement('span');
+		var inHumi = document.createElement('td');
+		var inDewpointSymbol = document.createElement('td');
+		inDewpointSymbol.className = "smallrow";
+		var inDewpoint = document.createElement('td');
+
+		inTempSymbolSpan.className = "fa fa-thermometer-half smallrow";
+		inSymbolSpan.className = "fa fa-home";
+		inTempSymbol.appendChild(inSymbolSpan);
+		inTempSymbol.appendChild(inTempSymbolSpan);
+		inTempData.className = "margin";
+		inTempData.style.color = "hsl("+ self.tempHue(indoorTemperatureValue) +",75%,60%)";
+		inTempData.innerHTML += indoorTemperatureValue + symbol;
+		inTempMinSymbol.className = "smallrow margin minimum fa fa-thermometer-empty";
+		inTempMin.className = "smallrow margin";
+		inTempMin.style.color = "hsl("+ self.tempHue(indoorTemperatureMin) +",75%,60%)";
+		inTempMin.innerHTML = indoorTemperatureMin + symbol;
+		inTempMaxSymbol.className = "smallrow margin maximum fa fa-thermometer-full";
+		inTempMax.className = "smallrow margin";
+		inTempMax.style.color = "hsl("+ self.tempHue(indoorTemperatureMax) +",75%,60%)";
+		inTempMax.innerHTML += indoorTemperatureMax + symbol;
+			
+		inHumiSymbolSpan.className = "margin fa fa-tint smallrow";
+		inHumiSymbol.appendChild(inHumiSymbolSpan);
+		inHumi.innerHTML += indoorHumidityValue + "%";
+//		inHumi.className = self.cssClassHumi(indoorHumidityValue);
+		inHumi.style.color = "hsl("+ self.humiHue(indoorHumidityValue) +",75%,60%)";
+		inDewpoint.className = "smallrow margin";
+		inDewpoint.innerHTML += indoorDewpointValue + symbol;
+
+		inRow1.appendChild(inTempSymbol);
+		inRow1.appendChild(inTempData);
+		inRow1.appendChild(inHumiSymbol);
+		inRow1.appendChild(inHumi);
+		inRow2.appendChild(inTempMinSymbol);
+		inRow2.appendChild(inTempMin);
+		inRow2.appendChild(inTempMaxSymbol);
+		inRow2.appendChild(inTempMax);
+		inRow2.appendChild(inDewpointSymbol);
+		inRow2.appendChild(inDewpoint);
+
+// air pressure
+
+		var airPressureRow = document.createElement('tr');
 		var airPressureSymbol = document.createElement('td');
 		var airPressure = document.createElement('td');
 		var airPressureTrendSymbol = document.createElement('td');
@@ -391,14 +429,23 @@ Module.register("MMM-WeatherStation", {
 		airPressure.setAttribute('colSpan', '3');
 //		airPressureSymbol.innerHTML = "<img src=images/air-pressure.png />"
 		airPressure.innerHTML = airPressureValue + ' hPa';
-		airPressure.className = 'medium margin ' + (airPressureValue < 1013 ? "lowpressure" : "highpressure");
-		airPressureTrendSymbol.className = "margin fa fa-angle-" + DeltaSymbol;
+		airPressure.className = 'medium margin';
+		airPressure.style.color = "hsl("+ self.pressureHue(airPressureValue) +",75%,60%)";
+		airPressureTrendSymbol.className = DeltaBlink + " margin fa fa-angle-" + DeltaSymbol;
 		airPressureTrend.innerHTML = (airPressureValueTrend > 0 ? "+" : "") + airPressureValueTrend;
-		airPressureTrend.className = 'medium margin ' + (airPressureValueTrend > 0 ? "highpressure" : "lowpressure");
+		airPressureTrend.className = 'medium margin';
+		airPressureTrend.style.color = "hsl("+ self.pressureTrendHue(airPressureValueTrend) +",75%,60%)";
 		airPressureRow.appendChild(airPressureSymbol);
 		airPressureRow.appendChild(airPressure);
 		airPressureRow.appendChild(airPressureTrendSymbol);
 		airPressureRow.appendChild(airPressureTrend);
+
+		tbody.appendChild(inRow1);
+		tbody.appendChild(inRow2);
+
+		tbody.appendChild(outRow1);
+		tbody.appendChild(outRow2);
+
 		tbody.appendChild(airPressureRow);
 
 		table.appendChild(tbody);
@@ -421,22 +468,6 @@ Module.register("MMM-WeatherStation", {
     	else { return Number(Math.round(number + "e-" + Math.abs(precision)) + "e" + Math.abs(precision)); }
     },
 
-	cssClassTemp: function(val) {
-		if ( val <= -10.0 ) {
-			return 'fuckingcold'
-		} else if ( val < 0.0 ) {
-			return 'cold';
-		} else if ( val < 10.0 ) {
-			return 'chilly';
-		} else if ( val < 20.0 ) {
-			return 'comfortable';
-		} else if ( val < 30.0 ) {
-			return 'warm';
-		} else {
-			return 'hot';
-		}		
-	},
-
 	cssClassHumi: function(val) {
 		if ( val < 50.0 ) {
 			return 'dry'
@@ -445,6 +476,50 @@ Module.register("MMM-WeatherStation", {
 		} else {
 			return 'wet';
 		}		
+	},
+
+	tempHue: function(temp) {
+		var min = -20;
+		var max =  35;
+		if ( temp < min ) {
+			temp = min;
+		} else if ( temp > max ) {
+			temp = max;
+		};
+		return Math.round(300 - (temp-min) * (300/(max-min)));
+	},
+
+	humiHue: function(humi) {
+		var min =  20;
+		var max = 100;
+		if ( humi < min ) {
+			humi = min;
+		} else if ( humi > max ) {
+			humi = max;
+		};
+		return Math.round(250 - (max-humi) * (250/(max-min)));
+	},
+
+	pressureHue: function(pressure) {
+		var min =  980;
+		var max = 1040;
+		if ( pressure < min ) {
+			pressure = min;
+		} else if ( pressure > max ) {
+			pressure = max;
+		};
+		return Math.round(250 - (pressure-min) * (250/(max-min)));
+	},
+
+	pressureTrendHue: function(trend) {
+		var min =  -2.0;
+		var max =   2.0;
+		if ( trend < min ) {
+			trend = min;
+		} else if ( trend > max ) {
+			trend = max;
+		};
+		return Math.round(250 - (trend-min) * (250/(max-min)));
 	},
 
 	/**

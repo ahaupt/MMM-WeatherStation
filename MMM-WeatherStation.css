@@ -2,7 +2,6 @@
  * Magic Mirror
  * Module Style Sheet: MMM-WeatherStation
  *
- * By David Dearden
  * MIT Licensed.
  */
  
@@ -30,6 +29,14 @@
 .MMM-WeatherStation .wet	{ color: #55aaff; }
 .MMM-WeatherStation .moderate	{ color: #22aa22; }
 .MMM-WeatherStation .dry	{ color: #bb4400; }
+
+.MMM-WeatherStation .blink	{ animation: blinker 1s linear infinite; }
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
 
 .MMM-WeatherStation .lowpressure	{ color: #7777ff; }
 .MMM-WeatherStation .highpressure	{ color: #dd5555; }

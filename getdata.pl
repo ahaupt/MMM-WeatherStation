@@ -2,7 +2,7 @@
 
 use HTTP::Request;
 use LWP::UserAgent;
-use LockFile::Simple qw(trylock unlock);
+use LockFile::Simple;
 use JSON;
 use DBI;
 use DateTime;
@@ -12,7 +12,8 @@ $SQLITE_FILE 	= '/dev/shm/mmm-weatherstation.sqlite';
 $LOCK_FILE 	= '/dev/shm/mmm-getdata';
 $TABLE_NAME	= 'weatherdata';
 
-trylock($LOCK_FILE) or exit 1;
+my $lockmgr = LockFile::Simple->make(-autoclean => 1);
+$lockmgr->trylock($LOCK_FILE) or exit 1;
 
 $request = HTTP::Request->new('GET' => $URL);
 $ua = LWP::UserAgent->new();
@@ -21,13 +22,21 @@ $response = $ua->request($request);
 die $response->status_line() unless $response->is_success();
 $data = from_json($response->content(), { utf8 => 1 });
 
+if ( open LOCAL_DATA, "/dev/shm/indoor-data" ) {
+	chomp($_ = <LOCAL_DATA>);
+	my ($temp, $humi) = split /\s+/;
+	close LOCAL_DATA;
+	$data->{'indoor-temperature'} = $temp;
+	$data->{'indoor-humidity'} = $humi;
+}
+
 my $dbh = sqlite_db();
 safe_data($dbh, $data);
 my $minmax = get_minmax($dbh);
 
 $output = {
 	'air-pressure'		=> $data->{'air-pressure'},
-	'air-pressure-1hour'	=> $minmax->{'air-pressure-1hour'},
+	'air-pressure-1hour'	=> $minmax->{'air-pressure-1hour'} || $data->{'air-pressure'},
 	'indoor-humidity'	=> $data->{'indoor-humidity'},
 	'indoor-humidity-min'	=> $minmax->{'indoor-humi-min'},
 	'indoor-humidity-max'	=> $minmax->{'indoor-humi-max'},
@@ -56,7 +65,7 @@ $output = {
 	'outdoor-dewpoint-celcius'=> dewpoint($data->{'outdoor-temperature'}, $data->{'outdoor-humidity'}),
 };
 print encode_json($output), "\n";
-unlock($LOCK_FILE);
+$lockmgr->unlock($LOCK_FILE);
 
 sub sqlite_db {
     my $schema = "indoor_temp REAL, indoor_humi REAL, outdoor_temp REAL, outdoor_humi REAL, pressure REAL, time DATETIME DEFAULT CURRENT_TIMESTAMP";
