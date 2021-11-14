@@ -219,7 +219,7 @@ Module.register("MMM-WeatherStation", {
 		}
 		
 	},
-	
+
 	/**
 	 * Override the notificationReceived function.  
 	 * For now, there are no actions based on system or module notifications.  
@@ -230,7 +230,7 @@ Module.register("MMM-WeatherStation", {
 	 */
 	notificationReceived: function(notification, payload, sender) {
 		var self = this;
-		
+
 		if (sender) { // If the notification is coming from another module
 			if (notification === "CURRENTWEATHER_DATA") {
 				if (!self.currentweatherLoaded) {
@@ -239,24 +239,37 @@ Module.register("MMM-WeatherStation", {
 				}
 			}
 		} else if (notification === "ALL_MODULES_STARTED") {
-			
 		}
 	},
-	
+
+	getTemplate: function() {
+		return 'templates/weather_station.njk';
+	},
+
+	/**
+	 * getTemplateData - Return the data that is included in the rendered Nunjucks remplate. The
+	 * whole module instance is returned here, because several functions are called in the template.
+	 *
+	 * @return {Object} Data to put into templates
+	 */
+	getTemplateData: function() {
+		return { module: this };
+	},
+
 	/**
 	 * Override the getDom function to generate the DOM objects to be displayed for this module instance
 	 */
-	getDom: function() {
+	getDom_old: function() {
 		var self = this;
 		var wrapper = document.createElement("div");
-		
+
 		if (!self.loaded) {
 			wrapper.classList.add("loading");
 			wrapper.classList.add("small");
 			wrapper.innerHTML += self.translate("LOADING");
 			return wrapper;
 		}
-			
+
 		wrapper.classList.add(self.config.fontSize);
 		var temperatureDecimals = self.config.roundTemperature ? 0 : 1;
 
@@ -468,14 +481,23 @@ Module.register("MMM-WeatherStation", {
     	else { return Number(Math.round(number + "e-" + Math.abs(precision)) + "e" + Math.abs(precision)); }
     },
 
-	cssClassHumi: function(val) {
-		if ( val < 50.0 ) {
-			return 'dry'
-		} else if ( val < 80.0 ) {
-			return 'moderate';
-		} else {
-			return 'wet';
-		}		
+
+	airPressureDeltaSymbol: function(val) {
+		var DeltaSymbol = 'right';
+		var DeltaBlink = '';
+		if ( val > 0.1 && val < 1.0 ) {
+			DeltaSymbol = 'up'
+		} else if ( val >= 1.0 ) {
+			DeltaSymbol = 'double-up';
+		} else if ( val < -0.1 && val > -1.0 ) {
+			DeltaSymbol = 'down';
+		} else if ( val <= -1.0 ) {
+			DeltaSymbol = 'double-down';
+			if ( airPressureValueTrend <= -2.0 ) {
+				DeltaBlink = 'blink';
+			}
+		}
+		return "fa-angle-" + DeltaSymbol
 	},
 
 	tempHue: function(temp) {
@@ -500,7 +522,7 @@ Module.register("MMM-WeatherStation", {
 		return Math.round(250 - (max-humi) * (250/(max-min)));
 	},
 
-	pressureHue: function(pressure) {
+	airpressureHue: function(pressure) {
 		var min =  980;
 		var max = 1040;
 		if ( pressure < min ) {
@@ -511,7 +533,7 @@ Module.register("MMM-WeatherStation", {
 		return Math.round(250 - (pressure-min) * (250/(max-min)));
 	},
 
-	pressureTrendHue: function(trend) {
+	airpressureTrendHue: function(trend) {
 		var min =  -2.0;
 		var max =   2.0;
 		if ( trend < min ) {
