@@ -5,8 +5,8 @@
 {% macro temp_data(where) %}
 <tr>
   <td>
-    <i class="margin fas fa-{{ 'home' if where == 'indoor' else 'sun' }}"></i>
-    <i class="margin fas fa-thermometer-half smallrow"></i>
+    <i class="fas fa-{{ 'home' if where == 'indoor' else 'sun' }}"></i>
+    <i class="fas fa-thermometer-half smallrow"></i>
   </td>
   {% set cur_temp = weatherData[where+'-celcius'] %}
   {% set cur_temp_color = module.tempHue(cur_temp) %}
@@ -22,17 +22,18 @@
   </td>
 </tr>
 <tr>
-  <td><i class="margin smallrow minimum fa fa-thermometer-empty"></i></td>
+  <td><i class="margin small minimum fa fa-thermometer-empty"></i></td>
   {% set min_temp = weatherData[where+'-celcius-min'] %}
   {% set min_temp_color = module.tempHue(min_temp) %}
-  <td style="color:hsl({{min_temp_color}},75%,60%)"><i class="margin smallrow">{{ min_temp }}°C</i></td>
-  <td><i class="margin smallrow maximum fa fa-thermometer-full"></i></td>
+  <td style="color:hsl({{min_temp_color}},75%,60%)"><i class="margin small">{{ min_temp }}°C</i></td>
+
+  <td><i class="margin small maximum fa fa-thermometer-full"></i></td>
   {% set max_temp = weatherData[where+'-celcius-max'] %}
   {% set max_temp_color = module.tempHue(max_temp) %}
-  <td style="color:hsl({{max_temp_color}},75%,60%)"><i class="margin smallrow">{{ max_temp }}°C</i></td>
+  <td style="color:hsl({{max_temp_color}},75%,60%)"><i class="margin small">{{ max_temp }}°C</i></td>
 
   <td/>
-  <td><i class="margin smallrow">{{ weatherData[where+'-dewpoint-celcius'] }}°C</i></td>
+  <td valign="bottom"><i class="margin small">{{ weatherData[where+'-dewpoint-celcius'] }}°C</i></td>
 </tr>
 {% endmacro %}
 
@@ -46,7 +47,7 @@
   <td colspan="3" style="color:hsl({{airpressure_color}},75%,60%)">
     <i class="margin medium">{{weatherData['air-pressure']}} hPa</i>
   </td>
-  <td><i class="margin medium fas {{ module.airPressureDeltaSymbol(airpressure_trend) }}"></i></td>
+  <td><i class="margin fas {{ module.airPressureDeltaSymbol(airpressure_trend) }} {{ 'blink' if airpressure_trend <= -2.0 }}"></i></td>
   <td style="color:hsl({{airpressure_trend_color}},75%,60%)">
     <i class="margin medium">{{airpressure_trend | round(1)}}</i>
   </td>
