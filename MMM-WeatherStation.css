@@ -8,7 +8,7 @@
 /**
  * Font configurations
  */
-.MMM-WeatherStation .x-small	{ font-size: 15px; line-height: 20px; font-style: normal; }
+.MMM-WeatherStation .x-small	{ vertical-align: top; font-size: 15px; line-height: 20px; font-style: normal; }
 .MMM-WeatherStation .small	{ vertical-align: middle; font-size: 20px; line-height: 25px; font-style: normal; }
 .MMM-WeatherStation .medium	{ font-size: 30px; line-height: 35px; font-style: normal; }
 .MMM-WeatherStation .large	{ font-size: 50px; line-height: 50px; font-style: normal; }
@@ -39,10 +39,27 @@
 */
 
 .MMM-WeatherStation .standard {
-   font-size: 50px;
-   line-height: 50px;
-   font-weight: 300;
-   font-style: normal;
+    font-size: 50px;
+    line-height: 50px;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.MMM-WeatherStation .image {
+    witdth: 25px;
+    height: 25px;
+    opacity: 0.5;
+}
+
+.MMM-WeatherStation .largeimage {
+    witdth: 50px;
+    height: 50px;
+    opacity: 0.5;
+}
+
+MMM-WeatherStation table {
+    border-collapse: separate;
+    border-spacing: 0 5px;
 }
 
 .MMM-WeatherStation table td {

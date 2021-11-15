@@ -39,17 +39,45 @@
 
 {% macro airpressure() %}
 <tr>
-  <td></td>
   {% set airpressure = weatherData['air-pressure'] %}
   {% set airpressure_trend = airpressure - weatherData['air-pressure-1hour'] %}
   {% set airpressure_color = module.airpressureHue(airpressure) %}
   {% set airpressure_trend_color = module.airpressureTrendHue(airpressure_trend) %}
+  <td align="center"><img src="modules/MMM-WeatherStation/images/air-pressure.png" class="largeimage"></td>
   <td colspan="3" style="color:hsl({{airpressure_color}},75%,60%)">
     <i class="margin medium">{{ module.roundNumber(weatherData['air-pressure'],1) }} hPa</i>
   </td>
-  <td><i class="margin medium fas {{ module.airPressureDeltaSymbol(airpressure_trend) }} {{ 'blink' if airpressure_trend <= -2.0 }}"></i></td>
+  <td>
+    <i class="margin large fas {{ module.airPressureDeltaSymbol(airpressure_trend) }} {{ 'blink' if airpressure_trend <= -2.0 }}"></i>
+  </td>
   <td style="color:hsl({{airpressure_trend_color}},75%,60%)">
     <i class="margin medium">{{ '+' if airpressure_trend > 0 }}{{ module.roundNumber(airpressure_trend,1) }}</i>
+  </td>
+</tr>
+{% endmacro %}
+
+{% macro co2() %}
+<tr>
+  <td align="center"><img src="modules/MMM-WeatherStation/images/co2.png" class="largeimage"></td>
+  {% set cur_co2 = 500 %}
+  {% set min_co2 = 450 %}
+  {% set max_co2 = 1200 %}
+  {% set cur_co2_color = module.co2Hue(cur_co2) %}
+  {% set min_co2_color = module.co2Hue(min_co2) %}
+  {% set max_co2_color = module.co2Hue(max_co2) %}
+  <td style="color:hsl({{cur_co2_color}},75%,60%)">
+    <i class="margin large">{{ cur_co2 }}</i>
+  </td>
+  <td valign="top">
+    <img src="modules/MMM-WeatherStation/images/co2.png" class="image">
+    <i class="x-small fas fa-arrow-down"></i>
+    <br>
+    <img src="modules/MMM-WeatherStation/images/co2.png" class="image">
+    <i class="x-small fas fa-arrow-up"></i>
+  </td><td>
+    <i class="margin small" style="color:hsl({{min_co2_color}},75%,60%)">{{ min_co2 }}</i>
+    <br>
+    <i class="margin small" style="color:hsl({{max_co2_color}},75%,60%)">{{ max_co2 }}</i>
   </td>
 </tr>
 {% endmacro %}
@@ -61,5 +89,7 @@
     {% endfor %}
     {{ airpressure() }}
   </tbody></table>
+  <table><tbody>
+    {{ co2() }}
+  </tbody></table>
 </div>
-

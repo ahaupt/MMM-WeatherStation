@@ -342,6 +342,17 @@ Module.register("MMM-WeatherStation", {
 		return Math.round(250 - (trend-min) * (250/(max-min)));
 	},
 
+	co2Hue: function(co2) {
+		var min =  400;
+		var max = 1500;
+		if ( co2 < min ) {
+			co2 = min;
+		} else if ( co2 > max ) {
+			co2 = max;
+		};
+		return Math.round(150 - (co2-min) * (150/(max-min)));
+	},
+
 	/**
 	 * The replaceAll function replaces all occurrences of a string within the given string. 
 	 * 
