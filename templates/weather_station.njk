@@ -14,7 +14,7 @@
     <i class="margin large">{{ module.roundNumber(cur_temp,1) }}°C</i>
   </td>
 
-  <td><i class="margin fa fa-tint smallrow"></i></td>
+  <td valign="top"><i class="margin fa fa-tint smallrow"></i></td>
   {% set cur_humi = weatherData[where+'-humidity'] %}
   {% set cur_humi_color = module.humiHue(cur_humi) %}
   <td colspan="3" style="color:hsl({{cur_humi_color}},75%,60%)">
