@@ -20,15 +20,6 @@
 .MMM-WeatherStation .minimum	{ color: #0000bb; }
 .MMM-WeatherStation .smallrow	{ vertical-align: top; padding-top: 5px; font-size: 20px; line-height: 15px; }
 .MMM-WeatherStation .margin	{ padding: 10px; }
-.MMM-WeatherStation .fuckingcold	{ color: #8800aa; }
-.MMM-WeatherStation .cold	{ color: #0000ee; }
-.MMM-WeatherStation .chilly	{ color: #00bb00; }
-.MMM-WeatherStation .comfortable	{ color: #bbbb00; }
-.MMM-WeatherStation .warm	{ color: #bb7700; }
-
-.MMM-WeatherStation .wet	{ color: #55aaff; }
-.MMM-WeatherStation .moderate	{ color: #22aa22; }
-.MMM-WeatherStation .dry	{ color: #bb4400; }
 
 .MMM-WeatherStation .blink	{ animation: blinker 1s linear infinite; }
 
@@ -37,9 +28,6 @@
     opacity: 0;
   }
 }
-
-.MMM-WeatherStation .lowpressure	{ color: #7777ff; }
-.MMM-WeatherStation .highpressure	{ color: #dd5555; }
 
 .MMM-WeatherStation .bigfont { font-weight: 300; }
 
@@ -56,7 +44,6 @@
 .MMM-WeatherStation table tr {
   border-bottom: solid 1px #222;
 }
-
 
 /**
  * Loading text
