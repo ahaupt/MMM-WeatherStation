@@ -8,21 +8,22 @@
 /**
  * Font configurations
  */
-.MMM-WeatherStation .x-small	{ font-size: 15px; line-height: 20px; }
-.MMM-WeatherStation .small	{ vertical-align: middle; font-size: 20px; line-height: 25px; }
-.MMM-WeatherStation .medium	{ font-size: 30px; line-height: 35px; }
-.MMM-WeatherStation .large	{ font-size: 50px; line-height: 50px; }
-.MMM-WeatherStation .x-large	{ font-size: 70px; line-height: 70px; letter-spacing: -3px; }
+.MMM-WeatherStation .x-small	{ font-size: 15px; line-height: 20px; font-style: normal; }
+.MMM-WeatherStation .small	{ vertical-align: middle; font-size: 20px; line-height: 25px; font-style: normal; }
+.MMM-WeatherStation .medium	{ font-size: 30px; line-height: 35px; font-style: normal; }
+.MMM-WeatherStation .large	{ font-size: 50px; line-height: 50px; font-style: normal; }
+.MMM-WeatherStation .x-large	{ font-size: 70px; line-height: 70px; letter-spacing: -3px; font-style: normal; }
+
 .MMM-WeatherStation .maximum	{ color: #bb0000; }
 /*
 .MMM-WeatherStation .minimum	{ vertical-align: top; margin: 10%; padding: 5px; font-size: 20px; line-height: 15px; color: #0000bb; }
 */
 .MMM-WeatherStation .minimum	{ color: #0000bb; }
+
 .MMM-WeatherStation .smallrow	{ vertical-align: top; padding-top: 5px; font-size: 20px; line-height: 15px; }
 .MMM-WeatherStation .margin	{ padding: 10px; }
 
 .MMM-WeatherStation .blink	{ animation: blinker 1s linear infinite; }
-
 @keyframes blinker {
   50% {
     opacity: 0;
@@ -36,6 +37,13 @@
   border-collapse:collapse;
 }
 */
+
+.MMM-WeatherStation .standard {
+   font-size: 50px;
+   line-height: 50px;
+   font-weight: 300;
+   font-style: normal;
+}
 
 .MMM-WeatherStation table td {
   line-height: 1.00;
