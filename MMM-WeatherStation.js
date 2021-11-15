@@ -271,12 +271,14 @@ Module.register("MMM-WeatherStation", {
 	 * @return (number) The rounded number
 	 */
 	roundNumber: function(number, precision) {
+
 		if (precision >= 0) {
-			return Number(Math.round(number + "e" + precision) + "e-" + precision);
+			return Number(Math.round(number + "e" + precision) + "e-" + precision).toFixed(precision);
 		} else {
 			return Number(Math.round(number + "e-" + Math.abs(precision)) + "e" + Math.abs(precision));
 		}
 	},
+
 
 	airPressureDeltaSymbol: function(val) {
 		var DeltaSymbol = 'right';

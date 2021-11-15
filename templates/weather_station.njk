@@ -10,8 +10,8 @@
   </td>
   {% set cur_temp = weatherData[where+'-celcius'] %}
   {% set cur_temp_color = module.tempHue(cur_temp) %}
-  <td colspan="3" style="color:hsl({{cur_temp_color}},75%,60%)">
-    <i class="margin">{{ cur_temp }}°C</i>
+  <td colspan="3" style="color:hsl({{ cur_temp_color }},75%,60%)">
+    <i class="margin">{{ module.roundNumber(cur_temp,1) }}°C</i>
   </td>
 
   <td><i class="margin fa fa-tint smallrow"></i></td>
@@ -25,15 +25,15 @@
   <td><i class="margin small minimum fa fa-thermometer-empty"></i></td>
   {% set min_temp = weatherData[where+'-celcius-min'] %}
   {% set min_temp_color = module.tempHue(min_temp) %}
-  <td style="color:hsl({{min_temp_color}},75%,60%)"><i class="margin small">{{ min_temp }}°C</i></td>
+  <td style="color:hsl({{min_temp_color}},75%,60%)"><i class="margin small">{{ module.roundNumber(min_temp,1) }}°C</i></td>
 
   <td><i class="margin small maximum fa fa-thermometer-full"></i></td>
   {% set max_temp = weatherData[where+'-celcius-max'] %}
   {% set max_temp_color = module.tempHue(max_temp) %}
-  <td style="color:hsl({{max_temp_color}},75%,60%)"><i class="margin small">{{ max_temp }}°C</i></td>
+  <td style="color:hsl({{max_temp_color}},75%,60%)"><i class="margin small">{{ module.roundNumber(max_temp,1) }}°C</i></td>
 
   <td/>
-  <td valign="bottom"><i class="margin small">{{ weatherData[where+'-dewpoint-celcius'] }}°C</i></td>
+  <td valign="bottom"><i class="margin small">{{ module.roundNumber(weatherData[where+'-dewpoint-celcius'],1) }}°C</i></td>
 </tr>
 {% endmacro %}
 
@@ -45,11 +45,11 @@
   {% set airpressure_color = module.airpressureHue(airpressure) %}
   {% set airpressure_trend_color = module.airpressureTrendHue(airpressure_trend) %}
   <td colspan="3" style="color:hsl({{airpressure_color}},75%,60%)">
-    <i class="margin medium">{{weatherData['air-pressure']}} hPa</i>
+    <i class="margin medium">{{ module.roundNumber(weatherData['air-pressure'],1) }} hPa</i>
   </td>
   <td><i class="margin fas {{ module.airPressureDeltaSymbol(airpressure_trend) }} {{ 'blink' if airpressure_trend <= -2.0 }}"></i></td>
   <td style="color:hsl({{airpressure_trend_color}},75%,60%)">
-    <i class="margin medium">{{airpressure_trend | round(1)}}</i>
+    <i class="margin medium">{{ module.roundNumber(airpressure_trend,1) }}</i>
   </td>
 </tr>
 {% endmacro %}
