@@ -243,6 +243,11 @@ Module.register("MMM-WeatherStation", {
 	},
 
 	getTemplate: function() {
+		// No data available
+		if (this.sensorData === null || this.sensorData.length === 0) {
+			return 'templates/nodata.njk';
+		}
+
 		return 'templates/weather_station.njk';
 	},
 
