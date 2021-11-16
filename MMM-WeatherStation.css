@@ -48,18 +48,18 @@
 .MMM-WeatherStation .image {
     witdth: 25px;
     height: 25px;
-    opacity: 0.5;
+    opacity: 0.67;
 }
 
 .MMM-WeatherStation .largeimage {
     witdth: 50px;
     height: 50px;
-    opacity: 0.5;
+    opacity: 0.67;
 }
 
 MMM-WeatherStation table {
     border-collapse: separate;
-    border-spacing: 0 5px;
+    border-spacing: 0 10px;
 }
 
 .MMM-WeatherStation table td {
