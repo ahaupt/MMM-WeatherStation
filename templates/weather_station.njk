@@ -59,9 +59,9 @@
 {% macro co2() %}
 <tr>
   <td align="center"><img src="modules/MMM-WeatherStation/images/co2.png" class="largeimage"></td>
-  {% set cur_co2 = 500 %}
-  {% set min_co2 = 450 %}
-  {% set max_co2 = 1200 %}
+  {% set cur_co2 = weatherData['indoor-co2'] %}
+  {% set min_co2 = weatherData['indoor-co2-min'] %}
+  {% set max_co2 = weatherData['indoor-co2-max'] %}
   {% set cur_co2_color = module.co2Hue(cur_co2) %}
   {% set min_co2_color = module.co2Hue(min_co2) %}
   {% set max_co2_color = module.co2Hue(max_co2) %}

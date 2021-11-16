@@ -8,6 +8,7 @@ use DBI;
 use DateTime;
 
 $URL		= 'http://raspi3:8081';
+$CO2_URL	= 'http://raspi3d:8081';
 $SQLITE_FILE 	= '/dev/shm/mmm-weatherstation.sqlite';
 $LOCK_FILE 	= '/dev/shm/mmm-getdata';
 $TABLE_NAME	= 'weatherdata';
@@ -21,6 +22,15 @@ $ua->timeout(1.0);
 $response = $ua->request($request);
 die $response->status_line() unless $response->is_success();
 $data = from_json($response->content(), { utf8 => 1 });
+
+$request = HTTP::Request->new('GET' => $CO2_URL);
+$response = $ua->request($request);
+unless ( $response->is_success() ) {
+	$data->{'indoor-co2'} = 500;
+} else {
+	$data_co2 = from_json($response->content(), { utf8 => 1 });
+	$data->{'indoor-co2'} = $data_co2->{'co2'};
+}
 
 if ( open LOCAL_DATA, "/dev/shm/indoor-data" ) {
 	chomp($_ = <LOCAL_DATA>);
@@ -37,6 +47,9 @@ my $minmax = get_minmax($dbh);
 $output = {
 	'air-pressure'		=> $data->{'air-pressure'},
 	'air-pressure-1hour'	=> $minmax->{'air-pressure-1hour'} || $data->{'air-pressure'},
+	'indoor-co2'		=> $data->{'indoor-co2'},
+	'indoor-co2-min'	=> $minmax->{'indoor-co2-min'},
+	'indoor-co2-max'	=> $minmax->{'indoor-co2-max'},
 	'indoor-humidity'	=> $data->{'indoor-humidity'},
 	'indoor-humidity-min'	=> $minmax->{'indoor-humi-min'},
 	'indoor-humidity-max'	=> $minmax->{'indoor-humi-max'},
@@ -68,7 +81,7 @@ print encode_json($output), "\n";
 $lockmgr->unlock($LOCK_FILE);
 
 sub sqlite_db {
-    my $schema = "indoor_temp REAL, indoor_humi REAL, outdoor_temp REAL, outdoor_humi REAL, pressure REAL, time DATETIME DEFAULT CURRENT_TIMESTAMP";
+    my $schema = "indoor_temp REAL, indoor_humi REAL, outdoor_temp REAL, outdoor_humi REAL, pressure REAL, co2 REAL, time DATETIME DEFAULT CURRENT_TIMESTAMP";
     my $dbh = DBI->connect("dbi:SQLite:dbname=$SQLITE_FILE","","");
     $dbh->do("CREATE TABLE IF NOT EXISTS $TABLE_NAME ($schema)")
 	or die $DBI::errstr;
@@ -77,13 +90,14 @@ sub sqlite_db {
 
 sub safe_data {
     my ($dbh, $data) = @_;
-    my $sth = $dbh->prepare("INSERT INTO $TABLE_NAME (indoor_temp, indoor_humi, outdoor_temp, outdoor_humi, pressure) VALUES (?,?,?,?,?)");
+    my $sth = $dbh->prepare("INSERT INTO $TABLE_NAME (indoor_temp, indoor_humi, outdoor_temp, outdoor_humi, pressure, co2) VALUES (?,?,?,?,?,?)");
     $sth->execute(
 	$data->{'indoor-temperature'},
 	$data->{'indoor-humidity'},
 	$data->{'outdoor-temperature'},
 	$data->{'outdoor-humidity'},
-	$data->{'air-pressure'}
+	$data->{'air-pressure'},
+	$data->{'indoor-co2'}
     );
 }
 
@@ -122,6 +136,15 @@ sub get_minmax {
     $sth->execute();
     $row = $sth->fetchrow_arrayref();
     $data->{"air-pressure-1hour"} = $row->[0];
+
+    $sth = $dbh->prepare("SELECT min(co2) FROM weatherdata WHERE time > datetime(datetime('now', '-1 days'))");
+    $sth->execute();
+    $row = $sth->fetchrow_arrayref();
+    $data->{"indoor-co2-min"} = $row->[0];
+    $sth = $dbh->prepare("SELECT max(co2) FROM weatherdata WHERE time > datetime(datetime('now', '-1 days'))");
+    $sth->execute();
+    $row = $sth->fetchrow_arrayref();
+    $data->{"indoor-co2-max"} = $row->[0];
 #    $d->dumpValue($data);
     return $data;
 }
