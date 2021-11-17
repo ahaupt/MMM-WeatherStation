@@ -8,7 +8,6 @@ use DBI;
 use DateTime;
 
 $URL		= 'http://raspi3:8081';
-$CO2_URL	= 'http://raspi3d:8081';
 $SQLITE_FILE 	= '/dev/shm/mmm-weatherstation.sqlite';
 $LOCK_FILE 	= '/dev/shm/mmm-getdata';
 $TABLE_NAME	= 'weatherdata';
@@ -23,21 +22,18 @@ $response = $ua->request($request);
 die $response->status_line() unless $response->is_success();
 $data = from_json($response->content(), { utf8 => 1 });
 
-$request = HTTP::Request->new('GET' => $CO2_URL);
-$response = $ua->request($request);
-unless ( $response->is_success() ) {
-	$data->{'indoor-co2'} = 500;
-} else {
-	$data_co2 = from_json($response->content(), { utf8 => 1 });
-	$data->{'indoor-co2'} = $data_co2->{'co2'};
-}
-
 if ( open LOCAL_DATA, "/dev/shm/indoor-data" ) {
 	chomp($_ = <LOCAL_DATA>);
 	my ($temp, $humi) = split /\s+/;
 	close LOCAL_DATA;
 	$data->{'indoor-temperature'} = $temp;
 	$data->{'indoor-humidity'} = $humi;
+}
+
+if ( open LOCAL_DATA, "/dev/shm/indoor-data-co2" ) {
+	chomp($_ = <LOCAL_DATA>);
+	close LOCAL_DATA;
+	$data->{'indoor-co2'} = $_;
 }
 
 my $dbh = sqlite_db();
