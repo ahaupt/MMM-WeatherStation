@@ -14,7 +14,7 @@
     <i class="margin large">{{ module.roundNumber(cur_temp,1) }}°C</i>
   </td>
 
-  <td valign="top"><i class="margin fa fa-tint smallrow"></i></td>
+  <td valign="top"><i class="fa fa-tint x-small"></i></td>
   {% set cur_humi = weatherData[where+'-humidity'] %}
   {% set cur_humi_color = module.humiHue(cur_humi) %}
   <td colspan="3" style="color:hsl({{cur_humi_color}},75%,60%)">
@@ -44,8 +44,8 @@
   {% set airpressure_color = module.airpressureHue(airpressure) %}
   {% set airpressure_trend_color = module.airpressureTrendHue(airpressure_trend) %}
   <td align="center"><img src="modules/MMM-WeatherStation/images/air-pressure.png" class="largeimage"></td>
-  <td colspan="3" style="color:hsl({{airpressure_color}},75%,60%)">
-    <i class="margin medium">{{ module.roundNumber(weatherData['air-pressure'],1) }} hPa</i>
+  <td style="color:hsl({{airpressure_color}},75%,60%)">
+    <i class="large">{{ module.roundNumber(weatherData['air-pressure'],1) }}</i><i class="x-small">hPa</i>
   </td>
   <td>
     <i class="margin large fas {{ module.airPressureDeltaSymbol(airpressure_trend) }} {{ 'blink' if airpressure_trend <= -2.0 }}"></i>
@@ -66,7 +66,7 @@
   {% set min_co2_color = module.co2Hue(min_co2) %}
   {% set max_co2_color = module.co2Hue(max_co2) %}
   <td style="color:hsl({{cur_co2_color}},75%,60%)">
-    <i class="margin large">{{ cur_co2 }}</i>
+    <i class="large">{{ cur_co2 }}</i><i class="x-small">ppm</i>
   </td>
   <td valign="top">
     <img src="modules/MMM-WeatherStation/images/co2.png" class="image">
@@ -90,8 +90,8 @@
   </tbody></table>
   <table><tbody>
     {{ airpressure() }}
-  </tbody></table>
-  <table><tbody>
+{#  </tbody></table>
+  <table><tbody> #}
     {{ co2() }}
   </tbody></table>
 </div>
