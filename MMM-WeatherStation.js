@@ -283,11 +283,11 @@ Module.register("MMM-WeatherStation", {
 	airPressureDeltaSymbol: function(val) {
 		var DeltaSymbol = 'right';
 		var DeltaBlink = '';
-		if ( val > 0.1 && val < 1.0 ) {
+		if ( val >= 0.2 && val < 1.0 ) {
 			DeltaSymbol = 'up'
 		} else if ( val >= 1.0 ) {
 			DeltaSymbol = 'double-up';
-		} else if ( val < -0.1 && val > -1.0 ) {
+		} else if ( val <= -0.2 && val > -1.0 ) {
 			DeltaSymbol = 'down';
 		} else if ( val <= -1.0 ) {
 			DeltaSymbol = 'double-down';
