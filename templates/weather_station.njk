@@ -69,15 +69,15 @@
     <i class="large">{{ cur_co2 }}</i><i class="x-small">ppm</i>
   </td>
   <td valign="top">
-    <img src="modules/MMM-WeatherStation/images/co2.png" class="image">
-    <i class="x-small fas fa-arrow-down"></i>
-    <br>
-    <img src="modules/MMM-WeatherStation/images/co2.png" class="image">
     <i class="x-small fas fa-arrow-up"></i>
-  </td><td>
-    <i class="margin small" style="color:hsl({{min_co2_color}},75%,60%)">{{ min_co2 }}</i>
+    <img src="modules/MMM-WeatherStation/images/co2.png" class="image">
     <br>
+    <i class="x-small fas fa-arrow-down"></i>
+    <img src="modules/MMM-WeatherStation/images/co2.png" class="image">
+  </td><td>
     <i class="margin small" style="color:hsl({{max_co2_color}},75%,60%)">{{ max_co2 }}</i>
+    <br>
+    <i class="margin small" style="color:hsl({{min_co2_color}},75%,60%)">{{ min_co2 }}</i>
   </td>
 </tr>
 {% endmacro %}
