@@ -32,8 +32,11 @@
   {% set max_temp_color = module.tempHue(max_temp) %}
   <td style="color:hsl({{max_temp_color}},75%,60%)"><i class="margin small">{{ module.roundNumber(max_temp,1) }}°C</i></td>
 
-  <td/>
-  <td><i class="margin small">{{ module.roundNumber(weatherData[where+'-dewpoint-celcius'],1) }}°C</i></td>
+  <td>
+{#    <img src="modules/MMM-WeatherStation/images/dewpoint.png" class="image x-small"> #}
+  </td><td>
+    <i class="margin small">{{ module.roundNumber(weatherData[where+'-dewpoint-celcius'],1) }}°C</i>
+  </td>
 </tr>
 {% endmacro %}
 
@@ -66,7 +69,7 @@
   {% set min_co2_color = module.co2Hue(min_co2) %}
   {% set max_co2_color = module.co2Hue(max_co2) %}
   <td style="color:hsl({{cur_co2_color}},75%,60%)">
-    <i class="large">{{ cur_co2 }}</i><i class="x-small">ppm</i>
+    <i class="large {{ 'blink' if cur_co2 > 2000 }}">{{ cur_co2 }}</i><i class="x-small">ppm</i>
   </td>
   <td valign="top">
     <i class="x-small fas fa-arrow-up"></i>
