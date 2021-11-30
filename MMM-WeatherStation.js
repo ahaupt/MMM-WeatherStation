@@ -291,7 +291,7 @@ Module.register("MMM-WeatherStation", {
 			DeltaSymbol = 'down';
 		} else if ( val <= -1.0 ) {
 			DeltaSymbol = 'double-down';
-			if ( airPressureValueTrend <= -2.0 ) {
+			if ( val <= -2.0 ) {
 				DeltaBlink = 'blink';
 			}
 		}
