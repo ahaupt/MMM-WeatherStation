@@ -46,13 +46,13 @@
 }
 
 .MMM-WeatherStation .image {
-    witdth: 25px;
+    width: 25px;
     height: 25px;
     opacity: 0.67;
 }
 
 .MMM-WeatherStation .largeimage {
-    witdth: 50px;
+    width: 50px;
     height: 50px;
     opacity: 0.67;
 }
