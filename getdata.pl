@@ -24,10 +24,11 @@ $data = from_json($response->content(), { utf8 => 1 });
 
 if ( open LOCAL_DATA, "/dev/shm/indoor-data" ) {
 	chomp($_ = <LOCAL_DATA>);
-	my ($temp, $humi) = split /\s+/;
+	my ($temp, $humi, pressure) = split /\s+/;
 	close LOCAL_DATA;
 	$data->{'indoor-temperature'} = $temp;
 	$data->{'indoor-humidity'} = $humi;
+	$data->{'air-pressure'} = $pressure;
 }
 
 if ( open LOCAL_DATA, "/dev/shm/indoor-data-co2" ) {
