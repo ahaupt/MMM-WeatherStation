@@ -8,6 +8,7 @@ use DBI;
 use DateTime;
 
 $URL		= 'http://raspi3:8081';
+$URL2		= 'http://raspi2/feinstaub/realtime-data.php';
 $SQLITE_FILE 	= '/dev/shm/mmm-weatherstation.sqlite';
 $LOCK_FILE 	= '/dev/shm/mmm-getdata';
 $TABLE_NAME	= 'weatherdata';
@@ -19,8 +20,21 @@ $request = HTTP::Request->new('GET' => $URL);
 $ua = LWP::UserAgent->new();
 $ua->timeout(1.0);
 $response = $ua->request($request);
-die $response->status_line() unless $response->is_success();
-$data = from_json($response->content(), { utf8 => 1 });
+if ( $response->is_success() ) {
+	$data = from_json($response->content(), { utf8 => 1 });
+}
+$request = HTTP::Request->new('GET' => $URL2 );
+$response = $ua->request($request);
+if ( $response->is_success() ) {
+	my $data2 = from_json($response->content(), { utf8 => 1 });
+	if ( $data2->{'current'}{'outdoor_temperature'} < $data->{'outdoor-temperature'} ) {
+		$data->{'outdoor-temperature'} = $data2->{'current'}{'outdoor_temperature'};
+		$data->{'outdoor-humidity'} = $data2->{'current'}{'outdoor_humidity'};
+	}
+	$data->{'air-pressure'} =  $data2->{'current'}{'air_pressure'};
+	$data->{'outdoor-pm2.5'} = $data2->{'current'}{'pm2_5'};
+	$data->{'outdoor-pm10'} = $data2->{'current'}{'pm10'};
+}
 
 if ( open LOCAL_DATA, "/dev/shm/indoor-data" ) {
 	chomp($_ = <LOCAL_DATA>);
@@ -60,6 +74,8 @@ $output = {
 	'indoor-fahrenheit-max'	=> to_fahrenheit($minmax->{'indoor-temp-max'}),
 	'indoor-kelvin-max'	=> to_kelvin($minmax->{'indoor-temp-max'}),
 	'indoor-dewpoint-celcius'=> dewpoint($data->{'indoor-temperature'}, $data->{'indoor-humidity'}),
+	'outdoor-pm2.5'		=> $data->{'outdoor-pm2.5'},
+	'outdoor-pm10'		=> $data->{'outdoor-pm10'},
 	'outdoor-humidity'	=> $data->{'outdoor-humidity'},
 	'outdoor-humidity-min'	=> $minmax->{'outdoor-humi-min'},
 	'outdoor-humidity-max'	=> $minmax->{'outdoor-humi-max'},
