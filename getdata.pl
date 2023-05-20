@@ -27,7 +27,8 @@ $request = HTTP::Request->new('GET' => $URL2 );
 $response = $ua->request($request);
 if ( $response->is_success() ) {
 	my $data2 = from_json($response->content(), { utf8 => 1 });
-	if ( $data2->{'current'}{'outdoor_temperature'} < $data->{'outdoor-temperature'} ) {
+	# in case first sensor is dead or is more exposed to sunlight
+	if ( ! defined $data->{'outdoor-temperature'} or $data2->{'current'}{'outdoor_temperature'} < $data->{'outdoor-temperature'} ) {
 		$data->{'outdoor-temperature'} = $data2->{'current'}{'outdoor_temperature'};
 		$data->{'outdoor-humidity'} = $data2->{'current'}{'outdoor_humidity'};
 	}
